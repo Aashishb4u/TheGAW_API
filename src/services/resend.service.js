@@ -20,7 +20,7 @@ const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin
     const resend = new Resend(config.resend_key);
     const result = await resend.batch.send([
         {
-            from: 'TheGAW Industries <contact@creativehand.co.in>',
+            from: 'TheGAW Industries <admin@thegawindustries.com>',
             to: [userEmail],
             subject: userSubject,
             html: bodyForUser.updatedHtmlContent,
@@ -35,7 +35,7 @@ const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin
             ],
         },
         {
-            from: 'TheGAW Industries <contact@creativehand.co.in>',
+            from: 'TheGAW Industries <admin@thegawindustries.com>',
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
@@ -68,7 +68,7 @@ const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSu
 
     let adminMailResult = await resend.emails.send(
         {
-            from: 'TheGAW Industries <contact@creativehand.co.in>',
+            from: 'TheGAW Industries <admin@thegawindustries.com>',
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
@@ -84,7 +84,7 @@ const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSu
 
     adminMailResult = await resend.emails.send(
             {
-                from: 'TheGAW Industries <contact@creativehand.co.in>',
+                from: 'TheGAW Industries <admin@thegawindustries.com>',
                 to: [userEmail],
                 subject: userSubject,
                 html: bodyForUser.updatedHtmlContent,
@@ -113,7 +113,7 @@ const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, 
 
     let adminMailResult = await resend.emails.send(
         {
-            from: 'TheGAW Industries <contact@creativehand.co.in>',
+            from: 'TheGAW Industries <admin@thegawindustries.com>',
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
@@ -137,7 +137,7 @@ const sendLinkedInEmail = async (userEmail, bodyForUser) => {
     // Sending the email using the Resend API
     const result = await resend.batch.send([
         {
-            from: 'Creative Hand <contact@creativehand.co.in>',
+            from: 'TheGAW Industries <admin@thegawindustries.com>',
             to: [userEmail],
             subject: 'Potential Fit for Your Team – Aashish Bhagwat’s Portfolio',
             html: bodyForUser.updatedHtmlContent,
