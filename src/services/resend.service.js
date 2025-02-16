@@ -239,7 +239,7 @@ const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, 
             "Content-Type": "application/json",
         };
     
-        const emailToAdmin = axios.post(apiUrl, {
+        const emailToAdmin = await axios.post(apiUrl, {
             from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [adminMail],
             subject: emailSubjectAdmin,
