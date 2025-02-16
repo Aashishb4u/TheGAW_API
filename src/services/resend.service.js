@@ -6,7 +6,7 @@ const linkedInEmail = require('../models/linkedInEmail.model'); // Assume you ha
 const fs = require("fs");
 const path = require("path");
 const axios = require('axios');
-
+const basePath = 'https://thegawindustries.com/attachments';
 
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
@@ -17,7 +17,7 @@ if (config.env !== 'test') {
         .catch(() => logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env'));
 }
 
-
+// We are using SDK here
 // const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser) => {
 //     const resend = new Resend(config.resend_key);
 //     const result = await resend.batch.send([
@@ -79,7 +79,7 @@ if (config.env !== 'test') {
 
 const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser) => {
     try {
-        const apiUrl = "https://api.resend.com/emails";
+        const apiUrl = `${config.resend_url}`;
         const headers = {
             Authorization: `Bearer ${config.resend_key}`,
             "Content-Type": "application/json",
@@ -90,12 +90,6 @@ const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin
             to: [userEmail],
             subject: userSubject,
             html: bodyForUser.updatedHtmlContent,
-            attachments: [
-                {
-                    path: "https://resend.com/static/sample/invoice.pdf",
-                    filename: "invoice.pdf",
-                },
-            ],
         }, { headers });
 
         const emailToAdmin = axios.post(apiUrl, {
@@ -103,20 +97,10 @@ const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
-            attachments: [
-                {
-                    path: "https://resend.com/static/sample/invoice.pdf",
-                    filename: "invoice.pdf",
-                },
-            ],
         }, { headers });
 
         // Send both requests in parallel
         const [responseUser, responseAdmin] = await Promise.all([emailToUser, emailToAdmin]);
-
-        console.log("User Email Sent:", responseUser.data);
-        console.log("Admin Email Sent:", responseAdmin.data);
-
         return { userEmail: responseUser.data, adminEmail: responseAdmin.data };
     } catch (error) {
         console.error("Error sending email:", error.response?.data || error.message);
@@ -128,77 +112,143 @@ const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin
 
 
 
-const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser, uploadedFiles) => {
-    const resend = new Resend(config.resend_key);
+// const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser, uploadedFiles) => {
+//     const resend = new Resend(config.resend_key);
 
-    // Read file contents from disk
+//     // Read file contents from disk
+//     const attachments = uploadedFiles.map((file) => ({
+//         filename: file.originalname, 
+//         content: fs.readFileSync(file.path), // Read file content
+//     }));
+
+//     let adminMailResult = await resend.emails.send(
+//         {
+//             from: 'TheGAW Industries <admin@thegawindustries.com>',
+//             to: [adminMail],
+//             subject: emailSubjectAdmin,
+//             html: bodyForAdmin.updatedHtmlContent,
+//             headers: {
+//                 'X-Entity-Ref-ID': config.resend_headers,
+//             },
+//             tags: [
+//                 { name: 'category', value: 'confirm_email' },
+//             ],
+//             attachments, // Attach files for admin email
+//         });
+
+
+//     adminMailResult = await resend.emails.send(
+//             {
+//                 from: 'TheGAW Industries <admin@thegawindustries.com>',
+//                 to: [userEmail],
+//                 subject: userSubject,
+//                 html: bodyForUser.updatedHtmlContent,
+//                 headers: {
+//                     'X-Entity-Ref-ID': config.resend_headers,
+//                 },
+//                 tags: [
+//                     { name: 'category', value: 'confirm_email' },
+//                 ],
+//             }
+//           );
+
+//     console.log(adminMailResult);
+//     return adminMailResult;
+// };
+
+
+const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser, uploadedFiles) => {
+
     const attachments = uploadedFiles.map((file) => ({
+        path: `${config.base_path}/${file.filename}`,
         filename: file.originalname, 
-        content: fs.readFileSync(file.path), // Read file content
     }));
 
-    let adminMailResult = await resend.emails.send(
-        {
-            from: 'TheGAW Industries <admin@thegawindustries.com>',
-            to: [adminMail],
-            subject: emailSubjectAdmin,
-            html: bodyForAdmin.updatedHtmlContent,
-            headers: {
-                'X-Entity-Ref-ID': config.resend_headers,
-            },
-            tags: [
-                { name: 'category', value: 'confirm_email' },
-            ],
-            attachments, // Attach files for admin email
-        });
+    console.log(attachments);
 
 
-    adminMailResult = await resend.emails.send(
-            {
-                from: 'TheGAW Industries <admin@thegawindustries.com>',
-                to: [userEmail],
-                subject: userSubject,
-                html: bodyForUser.updatedHtmlContent,
-                headers: {
-                    'X-Entity-Ref-ID': config.resend_headers,
-                },
-                tags: [
-                    { name: 'category', value: 'confirm_email' },
-                ],
-            }
-          );
+    const apiUrl = `${config.resend_url}`;
+    console.log(apiUrl);
+    const headers = {
+        Authorization: `Bearer ${config.resend_key}`,
+        "Content-Type": "application/json",
+    };
 
-    console.log(adminMailResult);
-    return adminMailResult;
+    const emailToUser = axios.post(apiUrl, {
+        from: "TheGAW Industries <admin@thegawindustries.com>",
+        to: [userEmail],
+        subject: userSubject,
+        html: bodyForUser.updatedHtmlContent,
+    }, { headers });
+
+    const emailToAdmin = axios.post(apiUrl, {
+        from: "TheGAW Industries <admin@thegawindustries.com>",
+        to: [adminMail],
+        subject: emailSubjectAdmin,
+        html: bodyForAdmin.updatedHtmlContent,
+        attachments: attachments
+    }, { headers });
+
+    const [responseUser, responseAdmin] = await Promise.all([emailToUser, emailToAdmin]);
+
+    // Send both requests in parallel
+    return { userEmail: responseUser.data, adminEmail: responseAdmin.data };
+
 };
 
 
-const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, uploadedFiles) => {
-    const resend = new Resend(config.resend_key);
+// const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, uploadedFiles) => {
+//     const resend = new Resend(config.resend_key);
 
+//     // Read file contents from disk
+//     const attachments = uploadedFiles.map((file) => ({
+//         filename: file.originalname, 
+//         content: fs.readFileSync(file.path), // Read file content
+//     }));
+
+//     let adminMailResult = await resend.emails.send(
+//         {
+//             from: 'TheGAW Industries <admin@thegawindustries.com>',
+//             to: [adminMail],
+//             subject: emailSubjectAdmin,
+//             html: bodyForAdmin.updatedHtmlContent,
+//             headers: {
+//                 'X-Entity-Ref-ID': config.resend_headers,
+//             },
+//             tags: [
+//                 { name: 'category', value: 'confirm_email' },
+//             ],
+//             attachments, // Attach files for admin email
+//         });
+
+//     console.log(adminMailResult);
+//     return adminMailResult;
+// };
+
+
+const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, uploadedFiles) => {
     // Read file contents from disk
     const attachments = uploadedFiles.map((file) => ({
+        path: `${config.base_path}/${file.filename}`,
         filename: file.originalname, 
-        content: fs.readFileSync(file.path), // Read file content
     }));
 
-    let adminMailResult = await resend.emails.send(
-        {
-            from: 'TheGAW Industries <admin@thegawindustries.com>',
+        const apiUrl = `${config.resend_url}`;
+        const headers = {
+            Authorization: `Bearer ${config.resend_key}`,
+            "Content-Type": "application/json",
+        };
+    
+        const emailToAdmin = axios.post(apiUrl, {
+            from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
-            headers: {
-                'X-Entity-Ref-ID': config.resend_headers,
-            },
-            tags: [
-                { name: 'category', value: 'confirm_email' },
-            ],
-            attachments, // Attach files for admin email
-        });
+            attachments: attachments
+        }, { headers });
+    
 
-    console.log(adminMailResult);
-    return adminMailResult;
+    return emailToAdmin;
 };
 
 module.exports = {

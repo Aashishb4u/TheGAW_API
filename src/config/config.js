@@ -25,11 +25,12 @@ const envVarsSchema = Joi.object()
         EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
         RESEND_KEY: Joi.string().description('Resend Mail secret key'),
         RESEND_HEADERS: Joi.string().description('Resend Mail Headers'),
+        RESEND_URL: Joi.string().description('Resend URL'),
+        BASE_PATH: Joi.string().description('Base Path'),
     })
     .unknown();
 
 const {value: envVars, error} = envVarsSchema.prefs({errors: {label: 'key'}}).validate(process.env);
-
 if (error) {
     throw new Error(`Config validation error: ${error.message}`);
 }
@@ -38,7 +39,9 @@ module.exports = {
     env: envVars.NODE_ENV,
     port: envVars.PORT,
     resend_key: envVars.RESEND_KEY,
+    resend_url: envVars.RESEND_URL,
     resend_headers: envVars.RESEND_HEADERS,
+    base_path: envVars.BASE_PATH,
     mongoose: {
         url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
         options: {
