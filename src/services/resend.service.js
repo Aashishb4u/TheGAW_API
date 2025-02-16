@@ -226,30 +226,41 @@ const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSu
 // };
 
 
-const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, uploadedFiles) => {
-    // Read file contents from disk
-    const attachments = uploadedFiles.map((file) => ({
-        path: `${config.base_path}/${file.filename}`,
-        filename: file.originalname, 
-    }));
+const triggerProductEmail = async (adminMail, emailSubjectAdmin, bodyForAdmin, uploadedFiles) => {
+    try {
+        // Ensure uploadedFiles is an array
+        const attachments = Array.isArray(uploadedFiles) ? uploadedFiles.map((file) => ({
+            path: `${config.base_path}/${file.filename}`,
+            filename: file.originalname,
+        })) : [];
 
         const apiUrl = `${config.resend_url}`;
         const headers = {
             Authorization: `Bearer ${config.resend_key}`,
             "Content-Type": "application/json",
         };
-    
+
+        // Ensure bodyForAdmin is valid
+        if (!bodyForAdmin || typeof bodyForAdmin.updatedHtmlContent !== "string") {
+            throw new Error("Invalid email body content.");
+        }
+
+        // Send email request
         const emailToAdmin = await axios.post(apiUrl, {
             from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
-            attachments: attachments
+            attachments: attachments.length > 0 ? attachments : undefined,  // Only add if not empty
         }, { headers });
-    
 
-    return emailToAdmin;
+        return emailToAdmin;
+    } catch (error) {
+        console.error("Error sending email:", error?.response?.data || error.message);
+        throw error; // Rethrow the error for further handling
+    }
 };
+
 
 module.exports = {
     triggerEmail,
