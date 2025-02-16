@@ -5,6 +5,8 @@ const logger = require('../config/logger');
 const linkedInEmail = require('../models/linkedInEmail.model'); // Assume you have a model to track sent emails
 const fs = require("fs");
 const path = require("path");
+const axios = require('axios');
+
 
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
@@ -16,45 +18,114 @@ if (config.env !== 'test') {
 }
 
 
+// const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser) => {
+//     const resend = new Resend(config.resend_key);
+//     const result = await resend.batch.send([
+//         {
+//             from: 'TheGAW Industries <admin@thegawindustries.com>',
+//             to: [userEmail],
+//             subject: userSubject,
+//             html: bodyForUser.updatedHtmlContent,
+//             headers: {
+//                 'X-Entity-Ref-ID': config.resend_headers,
+//             },
+//             tags: [
+//                 {
+//                     name: 'category',
+//                     value: 'confirm_email',
+//                 },
+//             ],
+//         },
+//         {
+//             from: 'TheGAW Industries <admin@thegawindustries.com>',
+//             to: [adminMail],
+//             subject: emailSubjectAdmin,
+//             html: bodyForAdmin.updatedHtmlContent,
+//             headers: {
+//                 'X-Entity-Ref-ID': config.resend_headers,
+//             },
+//             tags: [
+//                 {
+//                     name: 'category',
+//                     value: 'confirm_email',
+//                 },
+//             ],
+//         }
+//     ]);
+
+//     console.log(result);
+
+//     return result;
+// };
+
+
+
+// curl -X POST 'https://api.resend.com/emails' \
+//      -H 'Authorization: Bearer re_123456789' \
+//      -H 'Content-Type: application/json' \
+//      -d $'{
+//   "from": "Acme <onboarding@resend.dev>",
+//   "to": ["delivered@resend.dev"],
+//   "subject": "Receipt for your payment",
+//   "html": "<p>Thanks for the payment</p>",
+//   "attachments": [
+//     {
+//       "path": "https://resend.com/static/sample/invoice.pdf",
+//       "filename": "invoice.pdf"
+//     }
+//   ]
+// }'
+
+
 const triggerEmail = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser) => {
-    const resend = new Resend(config.resend_key);
-    const result = await resend.batch.send([
-        {
-            from: 'TheGAW Industries <admin@thegawindustries.com>',
+    try {
+        const apiUrl = "https://api.resend.com/emails";
+        const headers = {
+            Authorization: `Bearer ${config.resend_key}`,
+            "Content-Type": "application/json",
+        };
+
+        const emailToUser = axios.post(apiUrl, {
+            from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [userEmail],
             subject: userSubject,
             html: bodyForUser.updatedHtmlContent,
-            headers: {
-                'X-Entity-Ref-ID': config.resend_headers,
-            },
-            tags: [
+            attachments: [
                 {
-                    name: 'category',
-                    value: 'confirm_email',
+                    path: "https://resend.com/static/sample/invoice.pdf",
+                    filename: "invoice.pdf",
                 },
             ],
-        },
-        {
-            from: 'TheGAW Industries <admin@thegawindustries.com>',
+        }, { headers });
+
+        const emailToAdmin = axios.post(apiUrl, {
+            from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
-            headers: {
-                'X-Entity-Ref-ID': config.resend_headers,
-            },
-            tags: [
+            attachments: [
                 {
-                    name: 'category',
-                    value: 'confirm_email',
+                    path: "https://resend.com/static/sample/invoice.pdf",
+                    filename: "invoice.pdf",
                 },
             ],
-        }
-    ]);
+        }, { headers });
 
-    console.log(result);
+        // Send both requests in parallel
+        const [responseUser, responseAdmin] = await Promise.all([emailToUser, emailToAdmin]);
 
-    return result;
+        console.log("User Email Sent:", responseUser.data);
+        console.log("Admin Email Sent:", responseAdmin.data);
+
+        return { userEmail: responseUser.data, adminEmail: responseAdmin.data };
+    } catch (error) {
+        console.error("Error sending email:", error.response?.data || error.message);
+        throw error;
+    }
 };
+
+
+
 
 
 const triggerEmailForCareers = async (userEmail, adminMail, userSubject, emailSubjectAdmin, bodyForAdmin, bodyForUser, uploadedFiles) => {
@@ -130,46 +201,8 @@ const triggerProductEmail = async ( adminMail, emailSubjectAdmin, bodyForAdmin, 
     return adminMailResult;
 };
 
-
-const sendLinkedInEmail = async (userEmail, bodyForUser) => {
-    const resend = new Resend(config.resend_key);
-
-    // Sending the email using the Resend API
-    const result = await resend.batch.send([
-        {
-            from: 'TheGAW Industries <admin@thegawindustries.com>',
-            to: [userEmail],
-            subject: 'Potential Fit for Your Team – Aashish Bhagwat’s Portfolio',
-            html: bodyForUser.updatedHtmlContent,
-            headers: {
-                'X-Entity-Ref-ID': config.resend_headers,
-            },
-            tags: [
-                {
-                    name: 'category',
-                    value: 'confirm_email',
-                },
-            ],
-        }
-    ]);
-
-    // Check if the email already exists in the database
-    const existingEmail = await linkedInEmail.findOne({ email: userEmail });
-
-    // If the email does not exist, save it to the database
-    if (!existingEmail) {
-        await new linkedInEmail({ email: userEmail }).save();
-        console.log(`Saved email: ${userEmail}`);
-    }
-
-    // Return the result of the Resend API call
-    return result;
-};
-
-
 module.exports = {
     triggerEmail,
-    sendLinkedInEmail,
     triggerEmailForCareers,
     triggerProductEmail,
 };
