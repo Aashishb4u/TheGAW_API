@@ -246,15 +246,24 @@ const triggerProductEmail = async (adminMail, emailSubjectAdmin, bodyForAdmin, u
         }
 
         // Send email request
-        const emailToAdmin = await axios.post(apiUrl, {
+        const emailToAdmin = axios.post(apiUrl, {
             from: "TheGAW Industries <admin@thegawindustries.com>",
             to: [adminMail],
             subject: emailSubjectAdmin,
             html: bodyForAdmin.updatedHtmlContent,
-            attachments: attachments.length > 0 ? attachments : undefined,  // Only add if not empty
+            // attachments: [
+            //     {
+            //     "path": "https://resend.com/static/sample/invoice.pdf",
+            //     "filename": "invoice.pdf"
+            //     }
+            // ]
+            attachments: attachments.length > 0 ? attachments : [],  // Only add if not empty
         }, { headers });
+        
+        const [responseAdmin] = await Promise.all([emailToAdmin]);
 
-        return emailToAdmin;
+        // Send both requests in parallel
+        return { adminEmail: responseAdmin.data };
     } catch (error) {
         console.error("Error sending email:", error?.response?.data || error.message);
         throw error; // Rethrow the error for further handling

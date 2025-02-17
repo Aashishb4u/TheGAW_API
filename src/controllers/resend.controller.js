@@ -39,7 +39,7 @@ const sendProductEmail = catchAsync(async (req, res) => {
     const uploadedFiles = [...(req.files.productOrderForm || [])];
     const verifyEmail = await resendService.triggerProductEmail(adminMail,
     emailSubjectAdmin,  bodyForAdmin, uploadedFiles);
-    handleSuccess(httpStatus.OK, {verifyEmail}, 'Email Sent Successfully.', req, res);
+    handleSuccess(httpStatus.OK, true, 'Email Sent Successfully.', req, res);
 });
 
 const sendCareersEmail = catchAsync(async (req, res) => {
