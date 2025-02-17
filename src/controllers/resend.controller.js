@@ -75,6 +75,9 @@ const generateEmail = async (myData) => {
         case 'news_letter':
             bodyForUser = await templateService.contactMailToUser(myData);
             break;
+        case 'demo_form':
+            bodyForUser = await templateService.careerMailToUser(myData);
+            break;
         case 'product_order_form':
             bodyForUser = await templateService.contactMailToUser(myData);
             break;

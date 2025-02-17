@@ -25,6 +25,10 @@ const fetchAdminTemplate = (userDetails) => {
             replaceArray = ["email"];
             filePath = path.join(__dirname, '..', 'public', 'templates', 'news_letter_admin.html');
             break;
+        case 'demo_form':
+            replaceArray = ["firstName", "lastName", "email", "phoneNumber", "jobRole", "companyName", "message", "interestedIn", "countryName"];
+            filePath = path.join(__dirname, '..', 'public', 'templates', 'demo_form_admin.html');
+            break;
     }
 
     return new Promise((resolve, reject) => {
@@ -82,6 +86,35 @@ const careerMailToUser = (userDetails) => {
     });
 }
 
+const demoMailToUser = (userDetails) => {
+    let filePath = null;
+    const {firstName, lastName, jobRole} = userDetails;
+    filePath = path.join(__dirname, '..', 'public', 'templates', 'antartiqa_career.html');
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (error, htmlContent) => {
+            if (error) {
+                reject(error);
+            } else {
+                let todaysDate = new Date();
+                todaysDate = todaysDate
+                    .toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    });
+                    
+                let updatedHtmlContent = htmlContent.replace('{{firstName}}', firstName);
+                updatedHtmlContent = updatedHtmlContent.replace('{{lastName}}', lastName);
+                updatedHtmlContent = updatedHtmlContent.replace('{{jobRole}}', jobRole);
+                const data = {
+                    updatedHtmlContent: updatedHtmlContent
+                };
+                return resolve(data);
+            }
+        });
+    });
+}
+
 const contactMailToUser = (userDetails) => {
     let filePath = null;
     filePath = path.join(__dirname, '..', 'public', 'templates', 'customer_contact.html');
@@ -127,5 +160,6 @@ module.exports = {
     fetchAdminTemplate,
     careerMailToUser,
     contactMailToUser,
-    fetchLinkedInMailToUserTemplate
+    fetchLinkedInMailToUserTemplate,
+    demoMailToUser
 };

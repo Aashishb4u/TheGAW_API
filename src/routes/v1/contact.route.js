@@ -11,5 +11,6 @@ router.post('/contact_us', validate(resendValidation.contact_us), resendControll
 router.post('/product_order_form', fileUpload.multiFileUpload, validate(resendValidation.product_order_form), resendController.sendProductEmail);
 router.post('/careers', fileUpload.multiFileUpload, validate(resendValidation.careers), resendController.sendCareersEmail);
 router.post('/news-letter', validate(resendValidation.news_letter), resendController.captureNewsLetter);
+router.post('/demo_form', validate(resendValidation.demo_form), resendController.sendEmailToCustomer);
 
 module.exports = router;
