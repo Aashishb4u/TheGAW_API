@@ -46,6 +46,55 @@ const demo_form = {
     }),
 };
 
+const request_for_training = {
+    body: Joi.object().keys({
+        fullName: Joi.string().required(),
+        companyName: Joi.string().required(),
+        jobRole: Joi.string().required(),
+        email: Joi.string().required().email(),
+        phoneNumber: Joi.string().required(),
+        regionName: Joi.string().required(),
+        countryName: Joi.string().required(),
+        interestedIn: Joi.string().required(),
+        participants: Joi.number().required(),
+        trainingFormat: Joi.string().required(),
+        comments: Joi.string().required(),
+        mailType: Joi.string().required()
+    }),
+};
+
+const sme_form = {
+    body: Joi.object().keys({
+        fullName: Joi.string().required(),
+        email: Joi.string().required().email(),
+        phoneNumber: Joi.string().required(),
+        linkedIn: Joi.string(),
+        experience: Joi.number().required(),
+        regionName: Joi.string().required(),
+        countryName: Joi.string().required(),
+        expertise: Joi.string().required(),
+        availability: Joi.string().required(),
+        comments: Joi.string().required(),
+        mailType: Joi.string().required()
+    }),
+};
+
+const transfer_partner = {
+    body: Joi.object().keys({
+        companyName: Joi.string().required(),
+        fullName: Joi.string().required(),
+        jobRole: Joi.string().required(),
+        email: Joi.string().required().email(),
+        phoneNumber: Joi.string().required(),
+        regionName: Joi.string().required(),
+        countryName: Joi.string().required(),
+        interestedIn: Joi.array().required(),
+        message: Joi.string().required(),
+        comments: Joi.string().required(),
+        mailType: Joi.string().required()
+    }),
+};
+
 
 const careers = {
     body: Joi.object().keys({
@@ -66,7 +115,10 @@ module.exports = {
     product_order_form,
     careers,
     news_letter,
-    demo_form
+    demo_form,
+    request_for_training,
+    sme_form,
+    transfer_partner
 };
 
 

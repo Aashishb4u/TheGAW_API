@@ -36,7 +36,8 @@ const multiFileUpload = multer({
     { name: "resume", maxCount: 1 }, 
     { name: "coverLetter", maxCount: 1 },
     { name: "email", maxCount: 1 },
-    { name: "productOrderForm", maxCount: 1 }
+    { name: "productOrderForm", maxCount: 1 },
+    { name: "support_doc", maxCount: 1 }
 ]); // Expecting two named files
 
 module.exports = {

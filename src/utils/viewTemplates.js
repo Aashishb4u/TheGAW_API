@@ -5,7 +5,6 @@ const constants = require('../utils/constants');
 
 
 const fetchAdminTemplate = (userDetails) => {
-    console.log(userDetails.mailType);
     let filePath = null;
     let replaceArray = [];
     switch(userDetails.mailType) {
@@ -28,6 +27,18 @@ const fetchAdminTemplate = (userDetails) => {
         case 'demo_form':
             replaceArray = ["firstName", "lastName", "email", "phoneNumber", "jobRole", "companyName", "message", "interestedIn", "countryName"];
             filePath = path.join(__dirname, '..', 'public', 'templates', 'demo_form_admin.html');
+            break;
+        case 'request_for_training':
+            replaceArray = ["fullName", "companyName", "jobRole", "email", "phoneNumber", "regionName", "countryName", "interestedIn", "participants", "trainingFormat", "comments"];
+            filePath = path.join(__dirname, '..', 'public', 'templates', 'request_for_training.html');
+            break;  
+        case 'sme_form':
+            replaceArray = ["fullName", "email", "phoneNumber", "linkedIn", "experience", "regionName", "countryName", "expertise", "availability", "comments"];
+            filePath = path.join(__dirname, '..', 'public', 'templates', 'sme_admin.html');
+            break;   
+        case 'transfer_partner_form':
+            replaceArray = ["companyName", "fullName", "jobRole", "email", "phoneNumber", "regionName", "countryName", "interestedIn", "message", "comments", "mailType"];
+            filePath = path.join(__dirname, '..', 'public', 'templates', 'transfer_partner_form.html');
             break;
     }
 
