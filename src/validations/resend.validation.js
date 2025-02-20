@@ -88,7 +88,7 @@ const transfer_partner = {
         phoneNumber: Joi.string().required(),
         regionName: Joi.string().required(),
         countryName: Joi.string().required(),
-        interestedIn: Joi.array().required(),
+        interestedIn: Joi.string().required(),
         message: Joi.string().required(),
         comments: Joi.string().required(),
         mailType: Joi.string().required()
