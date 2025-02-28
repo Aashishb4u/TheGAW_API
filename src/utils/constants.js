@@ -3,7 +3,7 @@ module.exports = {
   creativeHandProduction: "https://creativehand.co.in/",
   creativeHandLocal: "http://localhost:3000/",
   USER_ADDED_SUCCESS: 'User Added SuccessFully',
-  ADMIN_EMAIL: 'aashishbhagwat4u@gmail.com',
+  ADMIN_EMAIL: 'admin@thegawindustries.com',
   CAREER_EMAIL: 'careers@thegawindustries.com',
   OTP_VERIFY_SUCCESS: 'Otp verified SuccessFully',
   USER_CREATED_SUCCESS: 'User Created SuccessFully',
