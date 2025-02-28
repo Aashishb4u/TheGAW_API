@@ -33,7 +33,7 @@ const sendProductEmail = catchAsync(async (req, res) => {
 
 const sendCareersEmail = catchAsync(async (req, res) => {
         const { firstName, email } = req.body;
-        const adminMail = constants.ADMIN_EMAIL;
+        const adminMail = constants.CAREER_EMAIL;
         const emailSubjectAdmin = constants.ADMIN_SUBJECT;
         const userSubject = `${constants.CUSTOMER_SUBJECT} | ${firstName}`;
         const { bodyForAdmin, bodyForUser } = await generateEmail(req.body);

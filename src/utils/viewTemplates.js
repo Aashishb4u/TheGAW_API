@@ -71,7 +71,7 @@ const fetchAdminTemplate = (userDetails) => {
 const careerMailToUser = (userDetails) => {
     let filePath = null;
     const {firstName, lastName, jobRole} = userDetails;
-    filePath = path.join(__dirname, '..', 'public', 'templates', 'antartiqa_career.html');
+    filePath = path.join(__dirname, '..', 'public', 'templates', 'customer_career.html');
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (error, htmlContent) => {
             if (error) {
@@ -100,7 +100,7 @@ const careerMailToUser = (userDetails) => {
 const demoMailToUser = (userDetails) => {
     let filePath = null;
     const {firstName, lastName, jobRole} = userDetails;
-    filePath = path.join(__dirname, '..', 'public', 'templates', 'antartiqa_career.html');
+    filePath = path.join(__dirname, '..', 'public', 'templates', 'customer_career.html');
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (error, htmlContent) => {
             if (error) {

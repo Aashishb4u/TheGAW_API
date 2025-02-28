@@ -4,6 +4,7 @@ module.exports = {
   creativeHandLocal: "http://localhost:3000/",
   USER_ADDED_SUCCESS: 'User Added SuccessFully',
   ADMIN_EMAIL: 'aashishbhagwat4u@gmail.com',
+  CAREER_EMAIL: 'careers@thegawindustries.com',
   OTP_VERIFY_SUCCESS: 'Otp verified SuccessFully',
   USER_CREATED_SUCCESS: 'User Created SuccessFully',
   RAZORPAY_TEST_KEY: 'rzp_test_uPxCJhIQrZ46rn',
