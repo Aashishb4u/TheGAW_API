@@ -5,6 +5,8 @@ module.exports = {
   USER_ADDED_SUCCESS: 'User Added SuccessFully',
   ADMIN_EMAIL: 'admin@thegawindustries.com',
   CAREER_EMAIL: 'careers@thegawindustries.com',
+  // ADMIN_EMAIL: 'aashishbhagwat4u@gmail.com',
+  // CAREER_EMAIL: 'aashishbhagwat4u@gmail.com',
   OTP_VERIFY_SUCCESS: 'Otp verified SuccessFully',
   USER_CREATED_SUCCESS: 'User Created SuccessFully',
   RAZORPAY_TEST_KEY: 'rzp_test_uPxCJhIQrZ46rn',
